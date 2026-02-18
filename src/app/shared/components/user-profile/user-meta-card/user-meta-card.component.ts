@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { InputFieldComponent } from './../../form/input/input-field.component';
 import { ModalService } from '../../../services/modal.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 import { ModalComponent } from '../../ui/modal/modal.component';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -11,13 +12,26 @@ import { ButtonComponent } from '../../ui/button/button.component';
     ModalComponent,
     InputFieldComponent,
     ButtonComponent
-],
+  ],
   templateUrl: './user-meta-card.component.html',
   styles: ``
 })
 export class UserMetaCardComponent {
 
-  constructor(public modal: ModalService) {}
+  private authService = inject(AuthService);
+
+  constructor(public modal: ModalService) {
+    const currentUser = this.authService.currentUser();
+    if (currentUser) {
+      this.user = {
+        ...this.user,
+        firstName: currentUser.name.split(' ')[0] || '',
+        lastName: currentUser.name.split(' ').slice(1).join(' ') || '',
+        email: currentUser.email,
+        role: currentUser.role
+      };
+    }
+  }
 
   isOpen = false;
   openModal() { this.isOpen = true; }
@@ -29,7 +43,7 @@ export class UserMetaCardComponent {
     lastName: 'Chowdhury',
     role: 'Team Manager',
     location: 'Arizona, United States',
-    avatar: '/images/user/owner.jpg',
+    avatar: '/images/user/owner.png',
     social: {
       facebook: 'https://www.facebook.com/PimjoHQ',
       x: 'https://x.com/PimjoHQ',

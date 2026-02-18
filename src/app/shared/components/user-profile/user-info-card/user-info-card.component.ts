@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ModalService } from '../../../services/modal.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 import { InputFieldComponent } from '../../form/input/input-field.component';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -13,13 +14,25 @@ import { ModalComponent } from '../../ui/modal/modal.component';
     ButtonComponent,
     LabelComponent,
     ModalComponent
-],
+  ],
   templateUrl: './user-info-card.component.html',
   styles: ``
 })
 export class UserInfoCardComponent {
 
-  constructor(public modal: ModalService) {}
+  private authService = inject(AuthService);
+
+  constructor(public modal: ModalService) {
+    const currentUser = this.authService.currentUser();
+    if (currentUser) {
+      this.user = {
+        ...this.user,
+        firstName: currentUser.name.split(' ')[0] || '',
+        lastName: currentUser.name.split(' ').slice(1).join(' ') || '',
+        email: currentUser.email
+      };
+    }
+  }
 
   isOpen = false;
   openModal() { this.isOpen = true; }
