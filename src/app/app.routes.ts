@@ -116,6 +116,11 @@ export const routes: Routes = [
         component: VideosComponent,
         title: 'Angular Videos Dashboard | TailAdmin - Angular Admin Dashboard Template'
       },
+      {
+        path: 'business',
+        loadComponent: () => import('./pages/business/business.component').then(m => m.BusinessComponent),
+        title: 'Gestion de Negocios | Luky Admin Dashboard'
+      }
     ]
   },
   // error pages
