@@ -1,0 +1,118 @@
+<app-modal [isOpen]="isOpen" [className]="'max-w-[700px] m-4'" (close)="closeModal()">
+    <div class="p-5 sm:p-6">
+        <h2 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white sm:text-xl">
+            {{ isViewOnly ? 'Detalles del Negocio' : (businessToEdit ? 'Editar Negocio' : 'Agregar Nuevo Negocio') }}
+        </h2>
+        <form [formGroup]="businessForm" (ngSubmit)="onSubmit()">
+            <div class="space-y-4 max-h-[70vh] overflow-y-auto px-1 custom-scrollbar">
+
+                @if (businessToEdit || isViewOnly) {
+                <div class="flex justify-start mb-2">
+                    <app-switch label="Activo" [disabled]="isViewOnly"
+                        [defaultChecked]="businessForm.get('isActive')?.value"
+                        (valueChange)="businessForm.get('isActive')?.setValue($event)">
+                    </app-switch>
+                </div>
+                }
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="sm:col-span-2">
+                        <app-label for="name" class="mb-1.5">Nombre del Negocio</app-label>
+                        <app-input-field [disabled]="isViewOnly" type="text" id="name"
+                            placeholder="Ej. Barbería El Corte"
+                            [error]="!!(businessForm.get('name')?.invalid && businessForm.get('name')?.touched)"
+                            hint="Requerido" (valueChange)="businessForm.get('name')?.setValue($event)"
+                            [value]="businessForm.get('name')?.value"></app-input-field>
+                    </div>
+
+                    <div>
+                        <app-label for="taxId" class="mb-1.5">RUT / Tax ID</app-label>
+                        <app-input-field [disabled]="isViewOnly" type="text" id="taxId" placeholder="Ej. 12345678-9"
+                            [error]="!!(businessForm.get('taxId')?.invalid && businessForm.get('taxId')?.touched)"
+                            hint="Requerido" (valueChange)="businessForm.get('taxId')?.setValue($event)"
+                            [value]="businessForm.get('taxId')?.value"></app-input-field>
+                    </div>
+
+                    <div>
+                        <app-label for="businessType" class="mb-1.5">Tipo de Negocio</app-label>
+                        <app-input-field [disabled]="isViewOnly" type="text" id="businessType"
+                            placeholder="Ej. Peluquería"
+                            [error]="!!(businessForm.get('businessType')?.invalid && businessForm.get('businessType')?.touched)"
+                            hint="Requerido" (valueChange)="businessForm.get('businessType')?.setValue($event)"
+                            [value]="businessForm.get('businessType')?.value"></app-input-field>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <app-label for="contactEmail" class="mb-1.5">Email de Contacto</app-label>
+                        <app-input-field [disabled]="isViewOnly" type="email" id="contactEmail"
+                            placeholder="contacto@negocio.com"
+                            [error]="!!(businessForm.get('contactEmail')?.invalid && businessForm.get('contactEmail')?.touched)"
+                            hint="Requerido" (valueChange)="businessForm.get('contactEmail')?.setValue($event)"
+                            [value]="businessForm.get('contactEmail')?.value"></app-input-field>
+                    </div>
+
+                    <div>
+                        <app-label for="phoneNumber" class="mb-1.5">Teléfono</app-label>
+                        <app-input-field [disabled]="isViewOnly" type="text" id="phoneNumber"
+                            placeholder="+56 9 1234 5678"
+                            (valueChange)="businessForm.get('phoneNumber')?.setValue($event)"
+                            [value]="businessForm.get('phoneNumber')?.value"></app-input-field>
+                    </div>
+
+                    <div>
+                        <app-label for="address" class="mb-1.5">Dirección</app-label>
+                        <app-input-field [disabled]="isViewOnly" type="text" id="address"
+                            placeholder="Av. Principal 123"
+                            (valueChange)="businessForm.get('address')?.setValue($event)"
+                            [value]="businessForm.get('address')?.value"></app-input-field>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <app-label for="logoUrl" class="mb-1.5">URL del Logo</app-label>
+                        <app-input-field [disabled]="isViewOnly" type="text" id="logoUrl"
+                            placeholder="https://ejemplo.com/logo.png"
+                            (valueChange)="businessForm.get('logoUrl')?.setValue($event)"
+                            [value]="businessForm.get('logoUrl')?.value"></app-input-field>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <app-label for="description" class="mb-1.5">Descripción</app-label>
+                        <app-text-area [disabled]="isViewOnly" id="description"
+                            placeholder="Descripción breve del negocio..." [rows]="3"
+                            (valueChange)="businessForm.get('description')?.setValue($event)"
+                            [value]="businessForm.get('description')?.value"></app-text-area>
+                    </div>
+
+                    <div>
+                        <app-label for="currentCashbackPercentage" class="mb-1.5">% Cashback Actual</app-label>
+                        <app-input-field [disabled]="isViewOnly" type="number" id="currentCashbackPercentage"
+                            [min]="'0'" [max]="'100'"
+                            [error]="!!(businessForm.get('currentCashbackPercentage')?.invalid && businessForm.get('currentCashbackPercentage')?.touched)"
+                            (valueChange)="businessForm.get('currentCashbackPercentage')?.setValue($event)"
+                            [value]="businessForm.get('currentCashbackPercentage')?.value"></app-input-field>
+                    </div>
+
+                    <div>
+                        <app-label for="pointsExpirationDays" class="mb-1.5">Días Expiración Puntos</app-label>
+                        <app-input-field [disabled]="isViewOnly" type="number" id="pointsExpirationDays" [min]="'1'"
+                            [error]="!!(businessForm.get('pointsExpirationDays')?.invalid && businessForm.get('pointsExpirationDays')?.touched)"
+                            (valueChange)="businessForm.get('pointsExpirationDays')?.setValue($event)"
+                            [value]="businessForm.get('pointsExpirationDays')?.value"></app-input-field>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <app-button variant="outline" type="button" (btnClick)="closeModal()">
+                        {{ isViewOnly ? 'Cerrar' : 'Cancelar' }}
+                    </app-button>
+                    @if (!isViewOnly) {
+                    <button type="submit" [disabled]="businessForm.invalid"
+                        class="flex items-center justify-center rounded-lg bg-brand-500 px-6 py-2.5 text-center text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Guardar
+                    </button>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+</app-modal>

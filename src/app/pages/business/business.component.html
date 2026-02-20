@@ -51,8 +51,9 @@
                             <th class="px-4 py-3 font-normal text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                 Estado</th>
                             <th class="px-4 py-3 font-normal text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                <span class="sr-only">Acciones</span>
-                            </th>
+                                Detalles</th>
+                            <th class="px-4 py-3 font-normal text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                Editar</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
@@ -90,30 +91,24 @@
                                 </app-badge>
                             </td>
                             <td class="px-4 py-4 text-gray-700 text-theme-sm dark:text-gray-400">
-                                <div class="relative inline-block">
-                                    <app-table-dropdown>
-                                        <div dropdown-button>
-                                            <button class="text-gray-500 dark:text-gray-400">
-                                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                        d="M5.99902 10.245C6.96552 10.245 7.74902 11.0285 7.74902 11.995V12.005C7.74902 12.9715 6.96552 13.755 5.99902 13.755C5.03253 13.755 4.24902 12.9715 4.24902 12.005V11.995C4.24902 11.0285 5.03253 10.245 5.99902 10.245ZM17.999 10.245C18.9655 10.245 19.749 11.0285 19.749 11.995V12.005C19.749 12.9715 18.9655 13.755 17.999 13.755C17.0325 13.755 16.249 12.9715 16.249 12.005V11.995C16.249 11.0285 17.0325 10.245 17.999 10.245ZM13.749 11.995C13.749 11.0285 12.9655 10.245 11.999 10.245C11.0325 10.245 10.249 11.0285 10.249 11.995V12.005C10.249 12.9715 11.0325 13.755 11.999 13.755C12.9655 13.755 13.749 12.9715 13.749 12.005V11.995Z"
-                                                        fill="" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div dropdown-content>
-                                            <button
-                                                class="text-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                                                Ver Detalles
-                                            </button>
-                                            <button
-                                                class="text-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                                                Eliminar
-                                            </button>
-                                        </div>
-                                    </app-table-dropdown>
-                                </div>
+                                <button (click)="openViewModal(item)"
+                                    class="text-gray-500 hover:text-brand-500 dark:text-gray-400 dark:hover:text-brand-500">
+                                    <svg class="fill-current" width="20" height="20" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 4.5C7.305 4.5 3.135 7.305 1.5 11.5C3.135 15.695 7.305 18.5 12 18.5C16.695 18.5 20.865 15.695 22.5 11.5C20.865 7.305 16.695 4.5 12 4.5ZM12 16.5C9.24 16.5 7 14.26 7 11.5C7 8.74 9.24 6.5 12 6.5C14.76 6.5 17 8.74 17 11.5C17 14.26 14.76 16.5 12 16.5ZM12 8.5C10.345 8.5 9 9.845 9 11.5C9 13.155 10.345 14.5 12 14.5C13.655 14.5 15 13.155 15 11.5C15 9.845 13.655 8.5 12 8.5Z" />
+                                    </svg>
+                                </button>
+                            </td>
+                            <td class="px-4 py-4 text-gray-700 text-theme-sm dark:text-gray-400">
+                                <button (click)="openEditModal(item)"
+                                    class="text-gray-500 hover:text-brand-500 dark:text-gray-400 dark:hover:text-brand-500">
+                                    <svg class="fill-current" width="20" height="20" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M14.06 9.02L14.98 9.94L5.92 19H5V18.08L14.06 9.02ZM17.66 3C17.41 3 17.15 3.1 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C18.17 3.09 17.92 3 17.66 3ZM14.06 6.19L3 17.25V21H6.75L17.81 9.94L14.06 6.19Z" />
+                                    </svg>
+                                </button>
                             </td>
                         </tr>
                         }
@@ -126,8 +121,8 @@
         <div class="px-6 py-4 border-t border-gray-200 dark:border-white/[0.05]">
             <div class="flex items-center justify-between">
                 <!-- Previous Button -->
-                <app-button size="sm" variant="outline" (btnClick)="goToPage(currentPage - 1)"
-                    [disabled]="currentPage === 1">
+                <app-button size="sm" variant="outline" (btnClick)="goToPage(currentPage)"
+                    [disabled]="currentPage === 0">
                     <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd"
@@ -138,7 +133,7 @@
                 </app-button>
                 <!-- Page Info -->
                 <span class="block text-sm font-medium text-gray-700 dark:text-gray-400 sm:hidden">
-                    Página {{ currentPage }} de {{ totalPages }}
+                    Página {{ currentPage + 1 }} de {{ totalPages }}
                 </span>
                 <!-- Page Numbers -->
                 <ul class="hidden items-center gap-0.5 sm:flex">
@@ -147,8 +142,8 @@
                         <button (click)="goToPage(idx + 1)"
                             class="flex h-10 w-10 items-center justify-center rounded-lg text-theme-sm font-medium"
                             [ngClass]="{
-                'bg-brand-500 text-white': currentPage === idx + 1,
-                'text-gray-700 hover:bg-brand-500/[0.08] dark:hover:bg-brand-500 dark:hover:text-white hover:text-brand-500 dark:text-gray-400': currentPage !== idx + 1
+                'bg-brand-500 text-white': currentPage === idx,
+                'text-gray-700 hover:bg-brand-500/[0.08] dark:hover:bg-brand-500 dark:hover:text-white hover:text-brand-500 dark:text-gray-400': currentPage !== idx
               }">
                             {{ idx + 1 }}
                         </button>
@@ -156,8 +151,8 @@
                     }
                 </ul>
                 <!-- Next Button -->
-                <app-button (btnClick)="goToPage(currentPage + 1)" size="sm" variant="outline"
-                    [disabled]="currentPage === totalPages">
+                <app-button (btnClick)="goToPage(currentPage + 2)" size="sm" variant="outline"
+                    [disabled]="currentPage === totalPages - 1">
                     <span class="hidden sm:inline">Siguiente</span>
                     <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -171,24 +166,6 @@
     </div>
 </div>
 
-<app-modal [isOpen]="isModalOpen" (close)="closeModal()">
-    <div class="p-6">
-        <h2 class="mb-6 text-xl font-semibold text-gray-800 dark:text-white">
-            Agregar Nuevo Negocio
-        </h2>
-        <div class="space-y-4">
-            <!-- Placeholder content for now -->
-            <p class="text-gray-600 dark:text-gray-400">
-                Formulario para crear un negocio (Próximamente)
-            </p>
-            <div class="flex justify-end gap-3 mt-6">
-                <app-button variant="outline" (btnClick)="closeModal()">
-                    Cancelar
-                </app-button>
-                <app-button (btnClick)="closeModal()">
-                    Guardar
-                </app-button>
-            </div>
-        </div>
-    </div>
-</app-modal>
+<app-business-modal [isOpen]="isModalOpen" [businessToEdit]="businessToEdit" [isViewOnly]="isViewOnly"
+    (close)="closeModal()" (save)="onSaveBusiness($event)">
+</app-business-modal>

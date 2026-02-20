@@ -4,9 +4,9 @@ import { PageBreadcrumbComponent } from '../../shared/components/common/page-bre
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
 import { TableDropdownComponent } from '../../shared/components/common/table-dropdown/table-dropdown.component';
 import { BadgeComponent } from '../../shared/components/ui/badge/badge.component';
-import { ModalComponent } from '../../shared/components/ui/modal/modal.component';
 import { BusinessService } from '../../core/services/business.service';
-import { Business } from '../../core/models/business.model';
+import { Business, BusinessRequestDTO } from '../../core/models/business.model';
+import { BusinessModalComponent } from './components/business-modal/business-modal.component';
 
 @Component({
     selector: 'app-business',
@@ -16,7 +16,7 @@ import { Business } from '../../core/models/business.model';
         ButtonComponent,
         TableDropdownComponent,
         BadgeComponent,
-        ModalComponent,
+        BusinessModalComponent
     ],
     templateUrl: './business.component.html',
     styles: ``
@@ -26,34 +26,95 @@ export class BusinessComponent implements OnInit {
 
     // We don't need local businessData anymore as we use the signal from the service
 
-    currentPage = 1;
-    itemsPerPage = 5;
+    currentPage = 0; // Server-side pages are 0-indexed
+    pageSize = 10;
+
     isModalOpen = false;
+    isViewOnly = false;
+    businessToEdit: Business | null = null;
 
     ngOnInit() {
-        this.businessService.loadBusinesses().subscribe();
+        this.loadBusinesses();
+    }
+
+    loadBusinesses() {
+        this.businessService.loadBusinesses(this.currentPage, this.pageSize).subscribe();
+    }
+
+    onPageChange(page: number) {
+        this.currentPage = page;
+        this.loadBusinesses();
     }
 
     openModal() {
+        this.businessToEdit = null;
+        this.isViewOnly = false;
+        this.isModalOpen = true;
+    }
+
+    openEditModal(business: Business) {
+        this.businessToEdit = business;
+        this.isViewOnly = false;
+        this.isModalOpen = true;
+    }
+
+    openViewModal(business: Business) {
+        this.businessToEdit = business;
+        this.isViewOnly = true;
         this.isModalOpen = true;
     }
 
     closeModal() {
         this.isModalOpen = false;
+        this.businessToEdit = null;
+        this.isViewOnly = false;
+    }
+
+    onSaveBusiness(event: { id: string | null, data: BusinessRequestDTO }) {
+        if (event.id) {
+            this.businessService.updateBusiness(event.id, event.data).subscribe({
+                next: () => {
+                    this.closeModal();
+                    this.loadBusinesses(); // Reload current page to see updates
+                },
+                error: (err) => {
+                    console.error('Error updating business', err);
+                }
+            });
+        } else {
+            this.businessService.createBusiness(event.data).subscribe({
+                next: () => {
+                    this.closeModal();
+                    this.loadBusinesses(); // Reload to see new business (might need to go to first page?)
+                    // Optionally reset to first page:
+                    // this.currentPage = 0;
+                    // this.loadBusinesses();
+                },
+                error: (err) => {
+                    console.error('Error creating business', err);
+                }
+            });
+        }
     }
 
     get totalPages(): number {
-        return Math.ceil(this.businessService.businesses().length / this.itemsPerPage);
+        return this.businessService.businesses().totalPages;
+    }
+
+    get totalElements(): number {
+        return this.businessService.businesses().totalElements;
     }
 
     get currentItems(): Business[] {
-        const start = (this.currentPage - 1) * this.itemsPerPage;
-        return this.businessService.businesses().slice(start, start + this.itemsPerPage);
+        return this.businessService.businesses().content;
     }
 
-    goToPage(page: number) {
-        if (page >= 1 && page <= this.totalPages) {
-            this.currentPage = page;
+    // Previous goToPage is replaced by onPageChange which handles 0-index logic internally or from template
+    // But keeping a compatible method for template simplicity if needed
+    goToPage(pageOneIndexed: number) {
+        if (pageOneIndexed >= 1 && pageOneIndexed <= this.totalPages) {
+            this.currentPage = pageOneIndexed - 1;
+            this.loadBusinesses();
         }
     }
 
